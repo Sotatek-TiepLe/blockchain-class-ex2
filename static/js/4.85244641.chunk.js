@@ -1,2 +1,0 @@
-(this.webpackJsonpsotatek_ex2=this.webpackJsonpsotatek_ex2||[]).push([[4],{257:function(n,t){},308:function(n,t){},310:function(n,t){},335:function(n,t){},337:function(n,t){},349:function(n,t){},367:function(n,t){},369:function(n,t){}}]);
-//# sourceMappingURL=4.85244641.chunk.js.map
