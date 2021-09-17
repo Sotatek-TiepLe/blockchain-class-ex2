@@ -37,7 +37,7 @@ export default function LandingPage() {
 		!loaded && (
 			<Container
 				style={{
-					width: "450px",
+					maxWidth: "610px",
 				}}
 			>
 				<Row>

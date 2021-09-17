@@ -102,7 +102,11 @@ export default function Home() {
 	return (
 		<>
 			{library ? (
-				<Container>
+				<Container
+					style={{
+						maxWidth: "610px",
+					}}
+				>
 					<h2>Home page</h2>
 					<div>
 						Account: <b>{account}</b>
