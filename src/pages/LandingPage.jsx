@@ -1,5 +1,5 @@
 import { useWeb3React } from "@web3-react/core";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Container, Row, Col } from "react-bootstrap";
 import { walletconnect, injected } from "../connect";
 
@@ -15,47 +15,37 @@ export default function LandingPage() {
 		active,
 		error,
 	} = web3ReactContext;
+	const [loaded, setLoaded] = useState(true);
 
 	// Default auto connect network
 	useEffect(() => {
+		setLoaded(true);
 		injected
 			.isAuthorized()
 			.then((isAuthorized) => {
-				// setLoaded(true)
 				if (isAuthorized && !active && !error) {
 					activate(injected);
 				}
 			})
-			.catch(() => {
-				// setLoaded(true)
+			.catch(() => {})
+			.finally(() => {
+				setLoaded(false);
 			});
 	}, [activate, active, error]);
 
-	// Subscribe to accounts change
-	library &&
-		library.on("accountsChanged", (accounts) => {
-			console.log(accounts);
-		});
-
-	// Subscribe to chainId change
-	library &&
-		library.on("connect", (chainId) => {
-			console.log(chainId);
-		});
-
-	// Subscribe to session disconnection
-	library &&
-		library.on("disconnect", (code, reason) => {
-			console.log(code, reason);
-		});
-
 	return (
-		<Container>
-			<Row>
-				<h2>Connect with ...</h2>
-			</Row>
-			<Row className="text-center">
-				<Col>
+		!loaded && (
+			<Container
+				style={{
+					width: "450px",
+				}}
+			>
+				<Row>
+					<Col>
+						<h2>Connect with ...</h2>
+					</Col>
+				</Row>
+				<Row className="justify-content-center g-4">
 					<Button
 						onClick={() => {
 							activate(walletconnect);
@@ -63,8 +53,6 @@ export default function LandingPage() {
 					>
 						WalletConnect
 					</Button>
-				</Col>
-				<Col>
 					<Button
 						onClick={() => {
 							activate(injected);
@@ -72,8 +60,8 @@ export default function LandingPage() {
 					>
 						MetaMask
 					</Button>
-				</Col>
-			</Row>
-		</Container>
+				</Row>
+			</Container>
+		)
 	);
 }

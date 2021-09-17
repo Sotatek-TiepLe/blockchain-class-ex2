@@ -1,19 +1,20 @@
 import { useWeb3React } from "@web3-react/core";
 import React, { useState } from "react";
-import { parseUnits, parseEther } from "@ethersproject/units";
-import ABI from "../../ABI.json";
-import { BigNumber } from "@ethersproject/bignumber";
 import { Contract } from "@ethersproject/contracts";
 import { ABI_ERC20, SMART_CONTRACT_ADDRESS } from "../../const";
-import { Button, Container, Row, Col, Form, Input } from "react-bootstrap";
+import { Card, Col, Row, Form, Input, Button } from "react-bootstrap";
+import ToDetail from "./ToDetail";
 
 export default function ToETH() {
 	const web3Context = useWeb3React();
 	const { library, account } = web3Context;
 	const [amount, setAmount] = useState("");
+	const [txDetail, setTxDetail] = useState({
+		hash: null,
+		done: false,
+	});
 
-	const onSubmitDepositETH = async (e) => {
-		//
+	const onSubmitWithdrawWETH = async (e) => {
 		e.preventDefault();
 
 		const myContract = new Contract(
@@ -21,29 +22,14 @@ export default function ToETH() {
 			ABI_ERC20,
 			library.getSigner()
 		);
-		const tx = await myContract.deposit({ value: parseEther(amount) });
-		debugger;
-		const log = await tx.wait();
-		console.log(`log`, log);
-		debugger;
-	};
-	const onSubmitTransferWETH = async (e) => {
-		//
-		e.preventDefault();
+		const amountSent = String(Number(amount) * 10 ** 18);
+		// Sent
+		const tx = await myContract.withdraw(amountSent);
+		setTxDetail({ ...txDetail, hash: tx.hash, done: false });
 
-		const myContract = new Contract(
-			SMART_CONTRACT_ADDRESS,
-			ABI,
-			library.getSigner()
-		);
-		const amountSent = parseUnits(amount);
-		const tx = await myContract.transfer(
-			"0x399C3A3b0fa0Cc447869Ee815475d26264D44804",
-			amountSent
-		);
-		debugger;
-		await tx.wait();
-		debugger;
+		// response
+		const logs = await tx.wait();
+		setTxDetail((preV) => ({ ...preV, done: logs.status === 1 }));
 	};
 
 	const onChangeAmount = (e) => {
@@ -51,28 +37,25 @@ export default function ToETH() {
 	};
 
 	return (
-		<div className="justify-content-center">
-			<Form onSubmit={onSubmitDepositETH}>
-				<Form.Group className="mb-3">
-					<Form.Control
-						type="text"
-						className="mb-3"
-						placeholder={"Input amount"}
-						value={amount}
-						onChange={onChangeAmount}
-					/>
-					<Button type="submit">Deposit ETH</Button>
-				</Form.Group>
-			</Form>
-			{/* <form onSubmit={onSubmitTransferWETH}>
-				<input
-					type="text"
-					placeholder={"Input amount"}
-					value={amount}
-					onChange={onChangeAmount}
-				/>
-				<Button type="submit">Transfer WETH</Button>
-			</form> */}
-		</div>
+		<Card className="mt-3">
+			<Card.Header>Withdraw WETH</Card.Header>
+			<Card.Body>
+				<Form onSubmit={onSubmitWithdrawWETH}>
+					<Form.Group className="mb-3">
+						<Form.Control
+							type="number"
+							min="0"
+							step="0.0000000000001"
+							className="mb-3"
+							placeholder={"Input amount"}
+							value={amount}
+							onChange={onChangeAmount}
+						/>
+						<Button type="submit">Unwrap</Button>
+						<ToDetail txDetail={txDetail} />
+					</Form.Group>
+				</Form>
+			</Card.Body>
+		</Card>
 	);
 }

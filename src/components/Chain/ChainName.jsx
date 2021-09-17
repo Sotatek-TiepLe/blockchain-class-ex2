@@ -4,5 +4,9 @@ import { CHAIN_LIST } from "../../const";
 
 export default function ChainName() {
 	const { chainId } = useWeb3React();
-	return <div>Network : {chainId ? CHAIN_LIST[chainId] : ""}</div>;
+	return (
+		<div>
+			Network : <b>{chainId ? CHAIN_LIST[chainId] : ""}</b>
+		</div>
+	);
 }
