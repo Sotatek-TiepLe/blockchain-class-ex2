@@ -1,10 +1,9 @@
 import "./App.css";
-import connectors from "./connect";
 import { Web3ReactProvider } from "@web3-react/core";
 import Home from "./pages/Home";
 import { Web3Provider } from "@ethersproject/providers";
 
-function getLibrary(provider, connector) {
+function getLibrary(provider) {
 	const library = new Web3Provider(provider);
 	library.pollingInterval = 12000;
 	return library; // this will vary according to whether you use e.g. ethers or web3.js
